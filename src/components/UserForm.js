@@ -1,79 +1,53 @@
-import React, { Component } from 'react'
-import "../css/userForm.css"
+import React, { useState } from 'react'
 import {userInformationAction} from "../redux/actions/userFormActions"
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-export class UserForm extends Component {
+import "../css/userForm.css"
 
-  constructor(props){
-    super(props);
-    this.state = {
-      Username:"",
-      Password:"",
-    };
-    this.updateStateValues = this.updateStateValues.bind(this);
-    this.submitLogin = this.submitLogin.bind(this);
+const UserForm = () => {
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const loggedIn = useSelector(state => state.userInformationReducer.loggedIn);
+  const dispatch = useDispatch();
+
+  const updateUserPass = (e,inputType) => {
+    inputType === 'u' ? setUserName(e.target.value) : setPassword(e.target.value);
   }
-  submitLogin(){
-    const userName = this.state.Username
-    const passWord = this.state.Password
-    if(userName === "" || passWord === ""){
+
+  const submitLogin = () => {
+    if(username === "" || password === ""){
       window.alert("Empty user and pass!")
       return;
     }
-    this.props.login({userName:userName,passWord:passWord})
-    
+    dispatch(userInformationAction({userName: username, passWord: password}));
   }
-  updateStateValues(e,inputType){
-    if(inputType === "u"){
-      this.setState({
-        Username:e.target.value,
-      })
-    }else{
-      this.setState({
-        Password:e.target.value,
-      }) 
-    }
-  }
-  render() {
-    console.log(this.props)
-    if(this.props.loggedIn === "YES"){
-      return(
-        <div>YOOOO</div>
-      )
-    }
-    return (
-      <div className="container">
-          
-          <div className="loginRegContainer">
-            <label>
-              Username:
-              <input type="text" name="name" onChange={e => this.updateStateValues(e,"u")}/>
-            </label>
-            <label>
-              Password:
-              <input type="password" className="password" name="password"onChange={e => this.updateStateValues(e,"p")}/>
-            </label>
-            <label>
-              <input className="button" type="submit" value="Login!" onClick={this.submitLogin}/>
-            </label>          
-          </div>
-          
-      </div>
+
+  console.log(loggedIn);
+  if(loggedIn === "YES"){
+    return(
+      <div>YOOOO</div>
     )
   }
+
+  return (
+    <div className="container">
+        
+        <div className="loginRegContainer">
+          <label>
+            Username:
+            <input type="text" name="name" onChange={e => updateUserPass(e, 'u')}/>
+          </label>
+          <label>
+            Password:
+            <input type="password" className="password" name="password" onChange={e => updateUserPass(e, 'p')}/>
+          </label>
+          <label>
+            <input className="button" type="submit" value="Login!" onClick={() => submitLogin()}/>
+          </label>          
+        </div>
+        
+    </div>
+  )
 }
 
-const mapStateToProps = state => ({
-  loggedIn: state.userInformationReducer.loggedIn,
-})
-const mapDispatchToProps = dispatch =>({
-  
-    login: (data) => {
-      dispatch(userInformationAction(data));
-    }
-    
-})
-
-
-export default connect(mapStateToProps,mapDispatchToProps)(UserForm)
+export default UserForm;
