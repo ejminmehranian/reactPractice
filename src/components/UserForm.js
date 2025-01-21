@@ -18,7 +18,8 @@ export class UserForm extends Component {
     const userName = this.state.Username
     const passWord = this.state.Password
     if(userName === "" || passWord === ""){
-      window.alert("Empty user and pass!")
+      // window.alert("Empty user and pass!")
+      console.log("empty user and pass")
       return;
     }
     this.props.login({userName:userName,passWord:passWord})
